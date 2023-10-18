@@ -9,12 +9,16 @@ const commentdata=[
     {
         name:"shiv1",
         text:"i am commenting1!",
+        reply:[{
+            name:"shiv3",
+        text:"i am commenting3!",
         reply:[]
+        }]
     },
     {
         name:"shiv2",
         text:"i am commenting2!",
-        reply:[1,2]
+        reply:[]
     }
 ]
 
@@ -22,7 +26,7 @@ const Comment=({data})=>{
     const {name,text,reply}=data;
 
     return(
-        <div className='flex shadow-sm bg-gray-100 p-2 rounded-lg my-2' key={data.name}>
+        <div key={data.name} className='flex shadow-sm bg-gray-100 p-2 rounded-lg my-2'>
             <img className='w-12 h-12' alt='user' src='https://as2.ftcdn.net/v2/jpg/00/65/77/27/1000_F_65772719_A1UV5kLi5nCEWI0BNLLiFaBPEkUbv5Fv.jpg'/>
             <div className='px-3'>
                 <p className='font-bold'>{name}</p>
@@ -36,12 +40,12 @@ const CommentList=({comments})=>{
     return(
         <>
             {
-                commentdata.map((ele,index)=>{
+                comments?.map((ele,index)=>{
                     return (
-                        <div>
+                        <div key={index}>
                             <Comment key={index} data={ele}/>
                             <div className='pl-5 border border-l-black ml-5'>
-                            {/* <CommentList comments={ele.reply}/> */}
+                            <CommentList comments={ele.reply}/>
                             </div>
                         </div>
                     )
