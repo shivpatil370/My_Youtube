@@ -3,11 +3,49 @@ import { toggleMenu } from "./utils/appSlice";
 import { useEffect, useState } from "react";
 import { YOUTUBE_SEARCH_API } from "./utils/contentApi";
 import { cacheResults } from "./utils/searchSlice";
+import { addText, clearText } from "./utils/searchFromInputSlice";
+
+// ------------------------------------------------------------------------------
+
+
+//  -------------------------------------------------------------------
+
 
 const Head=()=>{
     const [searchQuery,setSearchQuery]=useState("");
     const [suggestions,setSuggestions]=useState([]);
     const [showSuggestions,setShowSuggestions]=useState(false);
+
+    const [finalsearch,setFinalSearch]=useState("")
+
+    // console.log(finalsearch)
+
+    // ------------------------------------------------------------------------------------
+
+    const setdispatch=useDispatch();
+    // const cleardispatch=useDispatch()
+
+    const InputBtnSearch=()=>{
+        setdispatch(clearText())
+        if(finalsearch){
+            setdispatch(addText(finalsearch));
+            setFinalSearch("")
+        }
+        else{
+            setdispatch(addText("null"));
+        }
+
+    }
+
+    // -------------------------------------------------------------------------------------
+
+    const Myfun=(el)=>{
+        // console.log(el)
+        setSearchQuery(el)
+        setFinalSearch(el)
+     }
+    
+    // -------------------------------------------------------------------------------------
 
     const searchCache=useSelector((store)=>store.search)
     const dispatch=useDispatch()
@@ -31,6 +69,7 @@ const Head=()=>{
         }
 
     }, [searchQuery]);
+    
 
     const getSearchSuggestions= async ()=>{
          const data= await fetch(YOUTUBE_SEARCH_API + searchQuery);
@@ -57,14 +96,21 @@ const Head=()=>{
         </div>
         <div className="col-span-10 px-10">
             <div>
-            <input className="px-5 w-1/2 border border-gray-400 p-2 rounded-l-full" type="text" value={searchQuery} onChange={(e)=>setSearchQuery(e.target.value)} onFocus={()=>setShowSuggestions(true)} onBlur={()=>setShowSuggestions(false)} placeholder="Search..." />
-            <button className="border border-gray-400 px-4 py-2 rounded-r-full bg-gray-100">&#128269;</button>
+            <input className="px-5 w-1/2 border border-gray-400 p-2 rounded-l-full" type="text" value={searchQuery} onChange={(e)=>setSearchQuery(e.target.value)} onFocus={()=>setShowSuggestions(true)} placeholder="Search..." />
+            <button onClick={()=>{
+                InputBtnSearch()
+                 setSearchQuery("")
+                 }} className="border border-gray-400 px-4 py-2 rounded-r-full bg-gray-100">&#128269;</button>
             </div>
             {showSuggestions&&<div className="fixed bg-white py-2 px-2 w-[28.4rem] shadow-lg rounded-lg border border-gray-100">
                 <ul>
                     {
-                        suggestions?.map((ele)=>{
-                          return  <li key={ele} className="py-2 px-3 shadow-sm hover:bg-gray-100">&#128269; {ele}</li>
+                        suggestions?.map((ele,index)=>{
+                          return  <li key={index} className="py-2 px-3 shadow-sm hover:bg-gray-100" 
+                          onClick={()=>{
+                            Myfun(ele)
+                            setShowSuggestions(false)}
+                        }>&#128269; {ele}</li>
                         })
                     }
                 </ul>
